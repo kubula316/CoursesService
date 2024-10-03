@@ -1,5 +1,6 @@
 package com.siudek.courses.exception;
 
+import com.azure.storage.blob.models.BlobStorageException;
 import feign.FeignException;
 import org.json.JSONObject;
 import org.springframework.http.HttpStatus;
@@ -35,5 +36,10 @@ public class CourseExceptionHandler {
     @ExceptionHandler(FeignException.class)
     public ResponseEntity<?> handleFeignException(FeignException e){
         return ResponseEntity.status(e.status()).body(new JSONObject(e.contentUTF8()).toMap());
+    }
+
+    @ExceptionHandler(BlobStorageException.class)
+    public ResponseEntity<?> handleBlobException(BlobStorageException e){
+        return ResponseEntity.status(e.getStatusCode()).body(new JSONObject(e.getErrorCode()).toMap());
     }
 }

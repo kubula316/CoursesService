@@ -3,10 +3,7 @@ package com.siudek.courses.model;
 import com.siudek.courses.exception.CourseError;
 import com.siudek.courses.exception.CourseException;
 import com.siudek.courses.model.dto.StudentDto;
-import jakarta.validation.constraints.Future;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -44,6 +41,8 @@ public class Course {
     private Long participantsNumber;
 
     List<CourseMember> participants = new ArrayList<>();
+
+    private String imageUrl = "";
 
     public enum Status{
         ACTIVE,

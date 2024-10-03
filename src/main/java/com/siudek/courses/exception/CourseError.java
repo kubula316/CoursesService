@@ -10,7 +10,8 @@ public enum CourseError {
     STUDENT_IS_ALREADY_SIGNED("Student already in course"),
     STUDENT_IS_NOT_ACTIVE("Student is not acitve"),
     STUDENT_CANNOT_BE_SIGNED("Student cannot be signed to course"),
-    COURSE_IS_ALREADY_INACTIVE("Course is already inactive");
+    COURSE_IS_ALREADY_INACTIVE("Course is already inactive"),
+    FAILED_TO_UPLOAD_IMAGE("Faile to upload image to Azure stirage");
 
 
     private String message;

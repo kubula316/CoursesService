@@ -6,12 +6,17 @@ import com.siudek.courses.model.Course;
 import com.siudek.courses.model.CourseMember;
 import com.siudek.courses.model.dto.NotificationInfoDto;
 import com.siudek.courses.model.dto.StudentDto;
+import com.siudek.courses.storage.ImageStorageClient;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import com.siudek.courses.repository.CourseRepository;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,10 +27,13 @@ public class CourseServiceImpl implements CourseService{
     private final CourseRepository courseRepository;
     private final StudentServiceClient studentServiceClient;
     private final RabbitTemplate rabbitTemplate;
-    public CourseServiceImpl(CourseRepository courseRepository, StudentServiceClient studentServiceClient, RabbitTemplate rabbitTemplate) {
+    private final ImageStorageClient imageStorageClient;
+
+    public CourseServiceImpl(CourseRepository courseRepository, StudentServiceClient studentServiceClient, RabbitTemplate rabbitTemplate, ImageStorageClient imageStorageClient) {
         this.courseRepository = courseRepository;
         this.studentServiceClient = studentServiceClient;
         this.rabbitTemplate = rabbitTemplate;
+        this.imageStorageClient = imageStorageClient;
     }
 
     @Override
@@ -42,9 +50,21 @@ public class CourseServiceImpl implements CourseService{
     }
 
     @Override
-    public Course addCourse(Course course) {
+    public Course addCourse(Course course, String containerName, MultipartFile file) {
+        System.out.println("FUSADASAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+        try {
+            course.setImageUrl(uploadImage(containerName, file));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         course.validateCourse();
         return courseRepository.save(course);
+    }
+
+    public String uploadImage(String containerName, MultipartFile file)throws IOException{
+        try(InputStream inputStream = file.getInputStream()) {
+            return this.imageStorageClient.uploadImage(containerName, file.getOriginalFilename(), inputStream, file.getSize());
+        }
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.siudek.courses.service;
 
 import com.siudek.courses.model.Course;
 import com.siudek.courses.model.dto.StudentDto;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -9,7 +10,7 @@ public interface CourseService {
     List<Course> getCourses(Course.Status status);
     Course getCourse(String code);
 
-    Course addCourse(Course course);
+    Course addCourse(Course course, String containerName, MultipartFile file);
 
     void deleteCourse(String code);
 
