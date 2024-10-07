@@ -51,7 +51,6 @@ public class CourseServiceImpl implements CourseService{
 
     @Override
     public Course addCourse(Course course, String containerName, MultipartFile file) {
-        System.out.println("FUSADASAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
         try {
             course.setImageUrl(uploadImage(containerName, file));
         } catch (IOException e) {
