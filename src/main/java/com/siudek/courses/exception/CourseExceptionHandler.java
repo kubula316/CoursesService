@@ -30,6 +30,9 @@ public class CourseExceptionHandler {
                 ||e.getCourseError().equals(CourseError.STUDENT_CANNOT_BE_SIGNED)){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorInfo(e.getCourseError().getMessage()));
         }
+        else if (e.getCourseError().equals(CourseError.UNAUTHORIZED)){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ErrorInfo(e.getCourseError().getMessage()));
+        }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorInfo(e.getCourseError().getMessage()));
     }
 

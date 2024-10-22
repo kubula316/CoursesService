@@ -2,10 +2,7 @@ package com.siudek.courses.service;
 
 import com.siudek.courses.model.dto.StudentDto;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -17,4 +14,7 @@ public interface StudentServiceClient {
 
     @PostMapping("/students/members")
     List<StudentDto> getStudentsByEmail(@RequestBody List<String> mailList);
+
+    @GetMapping("/auth/validate-token")
+    boolean validateToken(@RequestHeader("Authorization") String authHeader);
 }

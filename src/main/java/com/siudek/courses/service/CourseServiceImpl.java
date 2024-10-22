@@ -6,20 +6,20 @@ import com.siudek.courses.model.Course;
 import com.siudek.courses.model.CourseMember;
 import com.siudek.courses.model.dto.NotificationInfoDto;
 import com.siudek.courses.model.dto.StudentDto;
+import com.siudek.courses.repository.CourseRepository;
+import com.siudek.courses.security.AuthService;
 import com.siudek.courses.storage.ImageStorageClient;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-import com.siudek.courses.repository.CourseRepository;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class CourseServiceImpl implements CourseService{
@@ -28,16 +28,36 @@ public class CourseServiceImpl implements CourseService{
     private final StudentServiceClient studentServiceClient;
     private final RabbitTemplate rabbitTemplate;
     private final ImageStorageClient imageStorageClient;
+    private final AuthService authService;
 
-    public CourseServiceImpl(CourseRepository courseRepository, StudentServiceClient studentServiceClient, RabbitTemplate rabbitTemplate, ImageStorageClient imageStorageClient) {
+    public CourseServiceImpl(CourseRepository courseRepository, StudentServiceClient studentServiceClient, RabbitTemplate rabbitTemplate, ImageStorageClient imageStorageClient, AuthService authService) {
         this.courseRepository = courseRepository;
         this.studentServiceClient = studentServiceClient;
         this.rabbitTemplate = rabbitTemplate;
         this.imageStorageClient = imageStorageClient;
+        this.authService = authService;
     }
 
     @Override
-    public List<Course> getCourses(Course.Status status) {
+    public List<Course> getCourses(Course.Status status, @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
+        System.out.println(status);
+        System.out.println(authHeader);
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            throw new CourseException(CourseError.UNAUTHORIZED);
+        }
+        String token = authHeader.substring(7);
+
+        try {
+            boolean tokenIsValidated = !authService.validateToken(token);
+        }catch (Exception e){
+            throw new CourseException(CourseError.UNAUTHORIZED);
+        }
+        if (!authService.validateToken(token)){
+            throw new CourseException(CourseError.UNAUTHORIZED);
+        }
+
+        //
+
         if (status == null){
             return courseRepository.findAll();
         }

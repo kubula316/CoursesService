@@ -3,16 +3,16 @@ package com.siudek.courses.controller;
 
 import com.siudek.courses.model.Course;
 import com.siudek.courses.model.dto.StudentDto;
+import com.siudek.courses.service.CourseService;
 import com.siudek.courses.storage.ImageStorageClient;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import com.siudek.courses.service.CourseService;
-import jakarta.validation.Valid;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.xml.transform.Result;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -31,8 +31,8 @@ public class CourseController {
     }
 
     @GetMapping
-    public List<Course> getCourses(@RequestParam(required = false) Course.Status status) {
-        return courseService.getCourses(status);
+    public List<Course> getCourses(@RequestParam(required = false) Course.Status status, @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
+        return courseService.getCourses(status, authHeader);
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
