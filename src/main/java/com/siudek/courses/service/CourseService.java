@@ -12,7 +12,7 @@ public interface CourseService {
     List<Course> getCourses(Course.Status status, @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader);
     Course getCourse(String code);
 
-    Course addCourse(Course course, String containerName, MultipartFile file);
+    Course addCourse(Course course, String containerName, MultipartFile file, @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader);
 
     void deleteCourse(String code);
 

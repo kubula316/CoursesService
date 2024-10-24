@@ -37,8 +37,8 @@ public class CourseController {
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public Course addCourse(@Valid @RequestPart Course course, @RequestParam String containerName, @RequestPart MultipartFile file) {
-        return courseService.addCourse(course, containerName, file);
+    public Course addCourse(@Valid @RequestPart Course course, @RequestParam String containerName, @RequestPart MultipartFile file, @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
+        return courseService.addCourse(course, containerName, file, authHeader);
     }
 
     @GetMapping("/{code}")

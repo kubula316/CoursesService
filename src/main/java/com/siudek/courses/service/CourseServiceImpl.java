@@ -70,7 +70,20 @@ public class CourseServiceImpl implements CourseService{
     }
 
     @Override
-    public Course addCourse(Course course, String containerName, MultipartFile file) {
+    public Course addCourse(Course course, String containerName, MultipartFile file, @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            throw new CourseException(CourseError.UNAUTHORIZED);
+        }
+        String token = authHeader.substring(7);
+
+        try {
+            boolean tokenIsValidated = !authService.validateToken(token);
+        }catch (Exception e){
+            throw new CourseException(CourseError.UNAUTHORIZED);
+        }
+        if (!authService.validateToken(token)){
+            throw new CourseException(CourseError.UNAUTHORIZED);
+        }
         try {
             course.setImageUrl(uploadImage(containerName, file));
         } catch (IOException e) {
