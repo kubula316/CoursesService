@@ -48,11 +48,11 @@ public class CourseServiceImpl implements CourseService{
         String token = authHeader.substring(7);
 
         try {
-            boolean tokenIsValidated = !authService.validateToken(token);
+            boolean tokenIsValidated = !authService.validateToken();
         }catch (Exception e){
             throw new CourseException(CourseError.UNAUTHORIZED);
         }
-        if (!authService.validateToken(token)){
+        if (!authService.validateToken()){
             throw new CourseException(CourseError.UNAUTHORIZED);
         }
 
@@ -77,11 +77,11 @@ public class CourseServiceImpl implements CourseService{
         String token = authHeader.substring(7);
 
         try {
-            boolean tokenIsValidated = !authService.validateToken(token);
+            boolean tokenIsValidated = !authService.validateToken();
         }catch (Exception e){
             throw new CourseException(CourseError.UNAUTHORIZED);
         }
-        if (!authService.validateToken(token)){
+        if (!authService.validateToken()){
             throw new CourseException(CourseError.UNAUTHORIZED);
         }
         try {
@@ -179,6 +179,7 @@ public class CourseServiceImpl implements CourseService{
             CourseFromDb.validateSignedParticipants(student);
             CourseFromDb.getParticipants().add(new CourseMember(student.getEmail()));
             CourseFromDb.incrementParticipants();
+            studentServiceClient.addCourse(id, code);
             return courseRepository.save(CourseFromDb);
         }).orElseThrow(() -> new CourseException(CourseError.COURSE_NOT_FOUND));
     }

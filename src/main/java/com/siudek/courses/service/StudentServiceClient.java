@@ -12,9 +12,13 @@ public interface StudentServiceClient {
     @GetMapping("/students/{id}")
     StudentDto getStudent(@PathVariable Long id);
 
+    @PostMapping("/students/addCourse")
+    void addCourse(@RequestParam Long id, @RequestParam String courseCode);
+
     @PostMapping("/students/members")
     List<StudentDto> getStudentsByEmail(@RequestBody List<String> mailList);
 
     @GetMapping("/auth/validate-token")
-    boolean validateToken(@RequestHeader("Authorization") String authHeader);
+    boolean validateToken();
 }
+

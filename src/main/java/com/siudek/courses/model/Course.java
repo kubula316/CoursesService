@@ -3,10 +3,11 @@ package com.siudek.courses.model;
 import com.siudek.courses.exception.CourseError;
 import com.siudek.courses.exception.CourseException;
 import com.siudek.courses.model.dto.StudentDto;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.Future;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -25,6 +26,10 @@ public class Course {
     private String name;
 
     private String description;
+
+    @NotNull
+    private String author;
+
     @NotNull
     @Future
     private LocalDateTime startDate;
@@ -42,12 +47,29 @@ public class Course {
 
     List<CourseMember> participants = new ArrayList<>();
 
+    @NotNull
+    private Category category;
+
+    List<String> tags = new ArrayList<>();
+
     private String imageUrl = "";
 
     public enum Status{
         ACTIVE,
         INACTIVE,
         FULL;
+    }
+
+    public enum Category{
+        PROGRAMING,
+        LANGUAGE,
+        GAMEDEV,
+        BUSINESS,
+        MUSIC,
+        FINANCE_AND_ACCOUNTING,
+        PERSONAL_DEVELOPMENT,
+        MARKETING,
+        HEALTH_AND_FITNESS
     }
     void validateCourseDate(){
         if (startDate.isAfter(endDate)){
