@@ -2,6 +2,7 @@ package com.siudek.courses.controller;
 
 
 import com.siudek.courses.model.Course;
+import com.siudek.courses.model.dto.CourseDto;
 import com.siudek.courses.model.dto.StudentDto;
 import com.siudek.courses.service.CourseService;
 import com.siudek.courses.storage.ImageStorageClient;
@@ -30,6 +31,11 @@ public class CourseController {
         this.imageStorageClient = imageStorageClient;
     }
 
+    @GetMapping("/projections")
+    public List<CourseDto> getCoursesProjections(@RequestParam(required = false) Course.Status status, @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader){
+    return courseService.getCoursesProjections(status, authHeader);
+    }
+
     @GetMapping
     public List<Course> getCourses(@RequestParam(required = false) Course.Status status, @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
         return courseService.getCourses(status, authHeader);
@@ -42,8 +48,8 @@ public class CourseController {
     }
 
     @GetMapping("/{code}")
-    public Course getCourse(@PathVariable String code) {
-        return courseService.getCourse(code);
+    public Course getCourse(@PathVariable String code, @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
+        return courseService.getCourse(code, authHeader);
     }
 
     @PostMapping("/{code}/student/{id}")

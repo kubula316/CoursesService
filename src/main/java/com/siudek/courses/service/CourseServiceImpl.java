@@ -4,6 +4,7 @@ import com.siudek.courses.exception.CourseError;
 import com.siudek.courses.exception.CourseException;
 import com.siudek.courses.model.Course;
 import com.siudek.courses.model.CourseMember;
+import com.siudek.courses.model.dto.CourseDto;
 import com.siudek.courses.model.dto.NotificationInfoDto;
 import com.siudek.courses.model.dto.StudentDto;
 import com.siudek.courses.repository.CourseRepository;
@@ -20,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CourseServiceImpl implements CourseService{
@@ -38,10 +40,7 @@ public class CourseServiceImpl implements CourseService{
         this.authService = authService;
     }
 
-    @Override
-    public List<Course> getCourses(Course.Status status, @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
-        System.out.println(status);
-        System.out.println(authHeader);
+    private void validateAcces(String authHeader) {
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             throw new CourseException(CourseError.UNAUTHORIZED);
         }
@@ -55,35 +54,54 @@ public class CourseServiceImpl implements CourseService{
         if (!authService.validateToken()){
             throw new CourseException(CourseError.UNAUTHORIZED);
         }
-
+    }
+    @Override
+    public List<Course> getCourses(Course.Status status, @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
+        validateAcces(authHeader);
         //
-
         if (status == null){
             return courseRepository.findAll();
         }
         return courseRepository.findAllByStatus(status);
     }
 
+
+
     @Override
-    public Course getCourse(String code) {
+    public List<CourseDto> getCoursesProjections(Course.Status status, String authHeader) {
+        validateAcces(authHeader);
+
+        if (status == null){
+            return courseRepository.findAll().stream().map(course ->
+                new CourseDto(course.getCode(),
+                        course.getName(),
+                        course.getAuthor(),
+                        course.getParticipantsLimit(),
+                        course.getParticipantsNumber(),
+                        course.getImageUrl()
+                        ))
+                    .collect(Collectors.toList());
+        }
+        return courseRepository.findAllByStatus(status).stream().map(course ->
+                        new CourseDto(course.getCode(),
+                                course.getName(),
+                                course.getAuthor(),
+                                course.getParticipantsLimit(),
+                                course.getParticipantsNumber(),
+                                course.getImageUrl()
+                               ))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Course getCourse(String code, @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
+        validateAcces(authHeader);
         return courseRepository.findById(code).orElseThrow(()-> new CourseException(CourseError.COURSE_NOT_FOUND));
     }
 
     @Override
     public Course addCourse(Course course, String containerName, MultipartFile file, @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            throw new CourseException(CourseError.UNAUTHORIZED);
-        }
-        String token = authHeader.substring(7);
-
-        try {
-            boolean tokenIsValidated = !authService.validateToken();
-        }catch (Exception e){
-            throw new CourseException(CourseError.UNAUTHORIZED);
-        }
-        if (!authService.validateToken()){
-            throw new CourseException(CourseError.UNAUTHORIZED);
-        }
+        validateAcces(authHeader);
         try {
             course.setImageUrl(uploadImage(containerName, file));
         } catch (IOException e) {
@@ -202,6 +220,8 @@ public class CourseServiceImpl implements CourseService{
         courseRepository.save(course);
         SendNotificationToRabbitMq(course);
     }
+
+
 
     private void SendNotificationToRabbitMq(Course course) {
         List <@NotNull String> emailMemebers = getCourseMembersEmails(course);
