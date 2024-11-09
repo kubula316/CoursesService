@@ -41,6 +41,16 @@ public class CourseController {
         return courseService.getCourses(status, authHeader);
     }
 
+    @GetMapping("/search")
+    public List<CourseDto> searchCourses(@RequestParam String searchTerm, @RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
+        return courseService.findCoursesByNameOrTags(searchTerm, token);
+    }
+
+    @GetMapping("/search/category")
+    public List<CourseDto> searchCoursesByCategory(@RequestParam String category, @RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
+        return courseService.findCoursesByCategory(category, token);
+    }
+
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public Course addCourse(@Valid @RequestPart Course course, @RequestParam String containerName, @RequestPart MultipartFile file, @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
@@ -73,5 +83,10 @@ public class CourseController {
         try(InputStream inputStream = file.getInputStream()) {
             return this.imageStorageClient.uploadImage(containerName, file.getOriginalFilename(), inputStream, file.getSize());
         }
+    }
+
+    @GetMapping("/savedCourses")
+    public List<Course> savedCourses(@RequestParam List<String> savedList, @RequestHeader(HttpHeaders.AUTHORIZATION) String token){
+        return courseService.getCoursesByCodes(savedList, token);
     }
 }

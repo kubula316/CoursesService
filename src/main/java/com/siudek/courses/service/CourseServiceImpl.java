@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -94,6 +95,43 @@ public class CourseServiceImpl implements CourseService{
     }
 
     @Override
+    public List<Course> getCoursesByCodes(List<String> savedList, String token) {
+        validateAcces(token);
+        if (savedList == null || savedList.isEmpty()){
+            return List.of();
+        }
+        return courseRepository.findAllByCodeIn(savedList);
+    }
+
+    @Override
+    public List<CourseDto> findCoursesByNameOrTags(String searchTerm, String token) {
+        validateAcces(token);
+        return courseRepository.findCoursesByNameOrTags(searchTerm).stream().map(course ->
+                        new CourseDto(course.getCode(),
+                                course.getName(),
+                                course.getAuthor(),
+                                course.getParticipantsLimit(),
+                                course.getParticipantsNumber(),
+                                course.getImageUrl()
+                        ))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<CourseDto> findCoursesByCategory(String category, String token) {
+        validateAcces(token);
+        return courseRepository.findAllByCategory(category).stream().map(course ->
+                        new CourseDto(course.getCode(),
+                                course.getName(),
+                                course.getAuthor(),
+                                course.getParticipantsLimit(),
+                                course.getParticipantsNumber(),
+                                course.getImageUrl()
+                        ))
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public Course getCourse(String code, @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
         validateAcces(authHeader);
         return courseRepository.findById(code).orElseThrow(()-> new CourseException(CourseError.COURSE_NOT_FOUND));
@@ -107,6 +145,13 @@ public class CourseServiceImpl implements CourseService{
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        course.validateCourse();
+        String[] baseTags = course.getName().split(" ");
+        List<String> tags = course.getTags() != null ? course.getTags() : new ArrayList<>();
+        for (String tag : baseTags) {
+            tags.add(tag.toLowerCase());
+        }
+        course.setTags(tags);
         course.validateCourse();
         return courseRepository.save(course);
     }

@@ -28,4 +28,10 @@ public interface CourseService {
     void finishEnroll(String code);
 
     List<CourseDto> getCoursesProjections(Course.Status status, @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader);
+
+    List<Course> getCoursesByCodes(List<String> savedList, String token);
+
+    List<CourseDto> findCoursesByNameOrTags(String searchTerm, String token);
+
+    List<CourseDto> findCoursesByCategory(String category, String token);
 }
