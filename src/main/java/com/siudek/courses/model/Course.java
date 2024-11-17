@@ -54,6 +54,8 @@ public class Course {
 
     private String imageUrl = "";
 
+    private List<Section> sections = new ArrayList<>();
+
     public enum Status{
         ACTIVE,
         INACTIVE,

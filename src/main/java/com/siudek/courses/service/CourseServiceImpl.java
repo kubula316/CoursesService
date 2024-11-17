@@ -4,6 +4,8 @@ import com.siudek.courses.exception.CourseError;
 import com.siudek.courses.exception.CourseException;
 import com.siudek.courses.model.Course;
 import com.siudek.courses.model.CourseMember;
+import com.siudek.courses.model.Lecture;
+import com.siudek.courses.model.Section;
 import com.siudek.courses.model.dto.CourseDto;
 import com.siudek.courses.model.dto.NotificationInfoDto;
 import com.siudek.courses.model.dto.StudentDto;
@@ -21,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -131,6 +134,28 @@ public class CourseServiceImpl implements CourseService{
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public List<Course> addSectionToCourse(String courseId, String sectionName, int position ,String token) {
+        validateAcces(token);
+        Course course = courseRepository.findById(courseId).orElseThrow(()-> new CourseException(CourseError.COURSE_NOT_FOUND));
+        course.getSections().add(new Section(sectionName, position));
+        course.getSections().sort(null);
+        return Collections.singletonList(courseRepository.save(course));
+    }
+    //dopoprawy^^^^^^^
+    @Override
+    public List<Course> addLectureToCourse(String courseId, String sectionName, Lecture lecture, MultipartFile video, String containerName, String token) {
+        validateAcces(token);
+        Course course = courseRepository.findById(courseId).orElseThrow(()-> new CourseException(CourseError.COURSE_NOT_FOUND));
+        try {
+            lecture.setVideoUrl(uploadImage(containerName, video));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        course.getSections().stream().filter(section -> sectionName.equals(section.getTitle())).findAny().map(section -> section.getLessons().add(lecture));
+        return Collections.singletonList(courseRepository.save(course));
+    }
+    //dopoprawy^^^^^^^
     @Override
     public Course getCourse(String code, @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
         validateAcces(authHeader);

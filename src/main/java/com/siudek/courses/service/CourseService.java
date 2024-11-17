@@ -1,6 +1,7 @@
 package com.siudek.courses.service;
 
 import com.siudek.courses.model.Course;
+import com.siudek.courses.model.Lecture;
 import com.siudek.courses.model.dto.CourseDto;
 import com.siudek.courses.model.dto.StudentDto;
 import org.springframework.http.HttpHeaders;
@@ -34,4 +35,8 @@ public interface CourseService {
     List<CourseDto> findCoursesByNameOrTags(String searchTerm, String token);
 
     List<CourseDto> findCoursesByCategory(String category, String token);
+
+    List<Course> addSectionToCourse(String courseId, String sectionName, int position ,String token);
+
+    List<Course> addLectureToCourse(String courseId, String sectionName, Lecture lecture, MultipartFile video, String containerName, String token);
 }

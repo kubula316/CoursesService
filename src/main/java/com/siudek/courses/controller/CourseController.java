@@ -2,6 +2,7 @@ package com.siudek.courses.controller;
 
 
 import com.siudek.courses.model.Course;
+import com.siudek.courses.model.Lecture;
 import com.siudek.courses.model.dto.CourseDto;
 import com.siudek.courses.model.dto.StudentDto;
 import com.siudek.courses.service.CourseService;
@@ -49,6 +50,18 @@ public class CourseController {
     @GetMapping("/search/category")
     public List<CourseDto> searchCoursesByCategory(@RequestParam String category, @RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
         return courseService.findCoursesByCategory(category, token);
+    }
+
+    @PostMapping("/add/section")
+    public List<Course> addSectionToCourse(@RequestParam String courseId, @RequestParam String sectionName, @RequestParam int position ,@RequestHeader(HttpHeaders.AUTHORIZATION) String token){
+        return courseService.addSectionToCourse(courseId, sectionName, position ,token);
+    }
+
+
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, value = "/add/lecture")
+    @ResponseStatus(HttpStatus.CREATED)
+    public List<Course> addLectureToSection(@RequestParam String courseId, @RequestParam String sectionName, @Valid @RequestPart Lecture lecture,  @RequestPart MultipartFile video, @RequestParam String containerName, @RequestHeader(HttpHeaders.AUTHORIZATION) String token){
+        return courseService.addLectureToCourse(courseId, sectionName, lecture, video, containerName, token);
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
