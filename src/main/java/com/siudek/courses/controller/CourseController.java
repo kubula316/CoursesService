@@ -57,7 +57,6 @@ public class CourseController {
         return courseService.addSectionToCourse(courseId, sectionName, position ,token);
     }
 
-
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, value = "/add/lecture")
     @ResponseStatus(HttpStatus.CREATED)
     public List<Course> addLectureToSection(@RequestParam String courseId, @RequestParam String sectionName, @Valid @RequestPart Lecture lecture,  @RequestPart MultipartFile video, @RequestParam String containerName, @RequestHeader(HttpHeaders.AUTHORIZATION) String token){

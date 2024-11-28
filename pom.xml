@@ -84,7 +84,12 @@
 			<artifactId>spring-cloud-azure-starter-storage-blob</artifactId>
 			<version>5.16.0</version>
 		</dependency>
-	</dependencies>
+        <dependency>
+            <groupId>jakarta.persistence</groupId>
+            <artifactId>jakarta.persistence-api</artifactId>
+            <version>3.1.0</version>
+        </dependency>
+    </dependencies>
 	<dependencyManagement>
 		<dependencies>
 			<dependency>

@@ -153,6 +153,7 @@ public class CourseServiceImpl implements CourseService{
             throw new RuntimeException(e);
         }
         course.getSections().stream().filter(section -> sectionName.equals(section.getTitle())).findAny().map(section -> section.getLessons().add(lecture));
+        course.getSections().forEach(section -> section.getLessons().sort(null));
         return Collections.singletonList(courseRepository.save(course));
     }
     //dopoprawy^^^^^^^
