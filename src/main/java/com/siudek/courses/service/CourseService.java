@@ -22,7 +22,7 @@ public interface CourseService {
 
     Course putCourse(String code, Course course);
 
-    Course addStudentToCourse(String code, Long id);
+    Course addStudentToCourse(String code, Long id, String authHeader);
 
     List<StudentDto> getCourseMembers(String code);
 
@@ -39,4 +39,6 @@ public interface CourseService {
     List<Course> addSectionToCourse(String courseId, String sectionName, int position ,String token);
 
     List<Course> addLectureToCourse(String courseId, String sectionName, Lecture lecture, MultipartFile video, String containerName, String token);
+
+    void removeStudentFromCourse(String code, String email, String authHeader);
 }

@@ -20,5 +20,8 @@ public interface StudentServiceClient {
 
     @GetMapping("/auth/validate-token")
     boolean validateToken();
+
+    @DeleteMapping("/students/removeCourse")
+    void removeCourse(@RequestParam String email, @RequestParam String courseCode);
 }
 

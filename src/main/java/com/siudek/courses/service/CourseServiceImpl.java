@@ -156,6 +156,9 @@ public class CourseServiceImpl implements CourseService{
         course.getSections().forEach(section -> section.getLessons().sort(null));
         return Collections.singletonList(courseRepository.save(course));
     }
+
+
+
     //dopoprawy^^^^^^^
     @Override
     public Course getCourse(String code, @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader) {
@@ -259,9 +262,9 @@ public class CourseServiceImpl implements CourseService{
     }
 
     @Override
-    public Course addStudentToCourse(String code, Long id) {
+    public Course addStudentToCourse(String code, Long id, String token) {
+        validateAcces(token);
         StudentDto student = studentServiceClient.getStudent(id);
-
         return courseRepository.findById(code).map(CourseFromDb ->{
             CourseFromDb.validateCourseIsActive();
             CourseFromDb.validateParticipantStatus(student);
@@ -271,6 +274,16 @@ public class CourseServiceImpl implements CourseService{
             studentServiceClient.addCourse(id, code);
             return courseRepository.save(CourseFromDb);
         }).orElseThrow(() -> new CourseException(CourseError.COURSE_NOT_FOUND));
+    }
+
+    @Override
+    public void removeStudentFromCourse(String code, String email, String authHeader) {
+        validateAcces(authHeader);
+        Course course = courseRepository.findById(code).orElseThrow(()-> new CourseException(CourseError.COURSE_NOT_FOUND));
+        course.decrementParticipants();
+        course.getParticipants().removeIf(courseMember -> courseMember.getEmail().equals(email));
+        studentServiceClient.removeCourse(email,code);
+        courseRepository.save(course);
     }
 
     @Override

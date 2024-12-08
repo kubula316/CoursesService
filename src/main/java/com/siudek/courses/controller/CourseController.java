@@ -75,8 +75,13 @@ public class CourseController {
     }
 
     @PostMapping("/{code}/student/{id}")
-    public Course addCourseMember(@PathVariable String code, @PathVariable Long id){
-        return courseService.addStudentToCourse(code, id);
+    public Course addCourseMember(@PathVariable String code, @PathVariable Long id, @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader){
+        return courseService.addStudentToCourse(code, id, authHeader);
+    }
+
+    @DeleteMapping("/{code}/student/{email}")
+    public void removeCourseMember(@PathVariable String code, @PathVariable String email, @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader){
+        courseService.removeStudentFromCourse(code, email, authHeader);
     }
 
     @GetMapping("/{code}/members")

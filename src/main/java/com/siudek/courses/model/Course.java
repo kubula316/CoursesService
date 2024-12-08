@@ -56,6 +56,18 @@ public class Course {
 
     private List<Section> sections = new ArrayList<>();
 
+
+
+
+
+
+
+
+
+
+
+
+
     public enum Status{
         ACTIVE,
         INACTIVE,
@@ -122,6 +134,13 @@ public class Course {
         participantsNumber += 1;
         if (participantsNumber.equals(participantsLimit)){
             setStatus(Status.FULL);
+        }
+    }
+
+    public void decrementParticipants(){
+        participantsNumber -= 1;
+        if (!participantsNumber.equals(participantsLimit)){
+            setStatus(Status.ACTIVE);
         }
     }
 
