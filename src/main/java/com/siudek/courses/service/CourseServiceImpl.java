@@ -211,15 +211,6 @@ public class CourseServiceImpl implements CourseService{
             if (!StringUtils.isEmpty(course.getName())){
                 courseFromDB.setName(course.getName());
             }
-            if (!StringUtils .isEmpty(course.getStartDate())){
-                courseFromDB.setStartDate(course.getStartDate());
-            }
-            if (!StringUtils.isEmpty(course.getStartDate())){
-                courseFromDB.setStartDate(course.getStartDate());
-            }
-            if (!StringUtils.isEmpty(course.getEndDate())){
-                courseFromDB.setEndDate(course.getEndDate());
-            }
             if (!StringUtils.isEmpty(course.getParticipantsLimit())){
                 courseFromDB.setParticipantsLimit(course.getParticipantsLimit());
             }
@@ -244,12 +235,6 @@ public class CourseServiceImpl implements CourseService{
             }
             if (!StringUtils.isEmpty(course.getName())) {
                 CourseFromDB.setName(course.getName());
-            }
-            if (!StringUtils.isEmpty(course.getStartDate())) {
-                CourseFromDB.setStartDate(course.getStartDate());
-            }
-            if (!StringUtils.isEmpty(course.getEndDate())) {
-                CourseFromDB.setEndDate(course.getEndDate());
             }
             if (!StringUtils.isEmpty(course.getParticipantsLimit())) {
                 CourseFromDB.setParticipantsLimit(course.getParticipantsLimit());
@@ -313,8 +298,6 @@ public class CourseServiceImpl implements CourseService{
                 .courseCode(course.getCode())
                 .courseDescription(course.getDescription())
                 .courseNAme(course.getName())
-                .courseEndDate(course.getEndDate())
-                .courseStartDate(course.getStartDate())
                 .emails(emailMemebers)
                 .build();
         rabbitTemplate.convertAndSend("enroll_finish", notificationInfo);

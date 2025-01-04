@@ -16,7 +16,6 @@ public class AuthService {
     }
 
     public boolean validateToken() {
-        // Wywołanie Feign Client, który komunikuje się z student-service
         return studentServiceClient.validateToken();
     }
 }

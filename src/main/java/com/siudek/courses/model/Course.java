@@ -3,7 +3,6 @@ package com.siudek.courses.model;
 import com.siudek.courses.exception.CourseError;
 import com.siudek.courses.exception.CourseException;
 import com.siudek.courses.model.dto.StudentDto;
-import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -11,32 +10,29 @@ import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Document
 @Data
 public class Course {
     @Id
-    private String code;
+    private String code = UUID.randomUUID().toString();
 
     private Status status;
+
     @NotBlank
     private String name;
 
     private String description;
 
+    private List<String> descriptionList;
+
+    private String descriptionDetails;
+
     @NotNull
     private String author;
-
-    @NotNull
-    @Future
-    private LocalDateTime startDate;
-
-    @NotNull
-    @Future
-    private LocalDateTime endDate;
 
     @NotNull
     @Min(0)
@@ -85,11 +81,7 @@ public class Course {
         MARKETING,
         HEALTH_AND_FITNESS
     }
-    void validateCourseDate(){
-        if (startDate.isAfter(endDate)){
-            throw new CourseException(CourseError.COURSE_START_DATE_IS_AFTER_END_DATE);
-        }
-    }
+
 
     void validateCourseParticipantsLimit(){
         if (participantsNumber>participantsLimit){
@@ -109,7 +101,6 @@ public class Course {
     public void validateCourse(){
         validateCourseFullStatus();
         validateCourseParticipantsLimit();
-        validateCourseDate();
     }
 
     public void validateCourseIsActive(){
